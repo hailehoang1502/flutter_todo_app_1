@@ -21,8 +21,8 @@ class _ToDoAppState extends State<ToDoApp> {
     ToDoItem(title: 'Read book'),
     ToDoItem(title: 'Play game'),
   ];
-  final TextEditingController _dailyTextController = TextEditingController();
-  final TextEditingController _todayTextController = TextEditingController();
+  final TextEditingController _dailyTaskController = TextEditingController();
+  final TextEditingController _todayTaskController = TextEditingController();
 
   @override
   void initState() {
@@ -58,9 +58,9 @@ class _ToDoAppState extends State<ToDoApp> {
     // Reset "Today Task" list every day
     if (storedTodayTasks != null && lastTodaySaved != null) {
       if (DateFormat('yyyy-MM-dd').format(DateTime.now()) == lastTodaySaved) {
-        List decodedTodayTodos = jsonDecode(storedTodayTasks);
+        List decodedTodayTasks = jsonDecode(storedTodayTasks);
         setState(() {
-          _todayTasks = decodedTodayTodos.map((e) => ToDoItem.fromJson(e)).toList();
+          _todayTasks = decodedTodayTasks.map((e) => ToDoItem.fromJson(e)).toList();
         });
       } else {
         setState(() {
@@ -123,32 +123,32 @@ class _ToDoAppState extends State<ToDoApp> {
   }
 
   void _addDailyTask() {
-    String newTitle = _dailyTextController.text.trim();
+    String newTitle = _dailyTaskController.text.trim();
     if (newTitle.isNotEmpty) {
       setState(() {
         _tasks.insert(0, ToDoItem(title: newTitle));
         _dailyTasks.insert(0, ToDoItem(title: newTitle));  // Add to the default list
       });
-      _dailyTextController.clear();
+      _dailyTaskController.clear();
       _saveDailyTasks();
       FocusScope.of(context).unfocus();
     }
   }
 
   void _addTodayTask() {
-    String newTitle = _todayTextController.text.trim();
+    String newTitle = _todayTaskController.text.trim();
     if (newTitle.isNotEmpty) {
       setState(() {
         _todayTasks.insert(0, ToDoItem(title: newTitle));
       });
-      _todayTextController.clear();
+      _todayTaskController.clear();
       _saveTodayTasks();
       FocusScope.of(context).unfocus();
     }
   }
 
   void _openAddTaskDialog(String listType) {
-    TextEditingController controller = listType == 'daily' ? _dailyTextController : _todayTextController;
+    TextEditingController controller = listType == 'daily' ? _dailyTaskController : _todayTaskController;
     showDialog(
       context: context,
       builder: (context) {
@@ -280,16 +280,16 @@ class _ToDoAppState extends State<ToDoApp> {
                       style: TextStyle(fontSize: 16, color: Colors.grey),
                     ),
                   ) : Column(
-                    children: _tasks.map((todo) {
-                      int index = _tasks.indexOf(todo);
+                    children: _tasks.map((task) {
+                      int index = _tasks.indexOf(task);
                       return Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         child: ListTile(
                           contentPadding: EdgeInsets.zero,
                           title: Text(
-                            todo.title,
+                            task.title,
                             style: TextStyle(
-                              decoration: todo.isFinished
+                              decoration: task.isFinished
                                   ? TextDecoration.lineThrough
                                   : null,
                             ),
@@ -299,7 +299,7 @@ class _ToDoAppState extends State<ToDoApp> {
                             children: [
                               IconButton(
                                 icon: Icon(
-                                  todo.isFinished
+                                  task.isFinished
                                       ? Icons.check_box
                                       : Icons.check_box_outline_blank,
                                   color: Colors.green,
@@ -366,16 +366,16 @@ class _ToDoAppState extends State<ToDoApp> {
                     ),
                   )
                       : Column(
-                    children: _todayTasks.map((todo) {
-                      int index = _todayTasks.indexOf(todo);
+                    children: _todayTasks.map((task) {
+                      int index = _todayTasks.indexOf(task);
                       return Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         child: ListTile(
                           contentPadding: EdgeInsets.zero,
                           title: Text(
-                            todo.title,
+                            task.title,
                             style: TextStyle(
-                              decoration: todo.isFinished
+                              decoration: task.isFinished
                                   ? TextDecoration.lineThrough
                                   : null,
                             ),
@@ -385,7 +385,7 @@ class _ToDoAppState extends State<ToDoApp> {
                             children: [
                               IconButton(
                                 icon: Icon(
-                                  todo.isFinished
+                                  task.isFinished
                                       ? Icons.check_box
                                       : Icons.check_box_outline_blank,
                                   color: Colors.green,
